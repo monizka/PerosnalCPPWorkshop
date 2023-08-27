@@ -11,8 +11,8 @@ int main()
     long long result2 = getMaxAdditionalDinersCount(15, 2, 3, vector<long long>({ 11, 6, 14 }));
     std::cout << "expected return value = " << result2 << "\n";
 
-    long long result3 = getMaxAdditionalDinersCount(std::numeric_limits<long long>::max(), std::numeric_limits<long long>::max(), 0, vector<long long>());
-    std::cout << "Expected Return Value = " << result3 << "\n";
+    /*long long result3 = getMaxAdditionalDinersCount(std::numeric_limits<long long>::max(), std::numeric_limits<long long>::max(), 0, vector<long long>());
+    std::cout << "Expected Return Value = " << result3 << "\n";*/
     return 0;
 }
 

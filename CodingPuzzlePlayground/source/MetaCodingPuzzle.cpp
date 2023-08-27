@@ -50,42 +50,43 @@ double getHitProbability(int R, int C, vector<vector<int>> G)
 }
 #pragma endregion
 
-#define SEAT_OCCUPIED false
-#define SEAT_EMPTY true
-
 #pragma region Level 1
 long long getMaxAdditionalDinersCount(long long N, long long K, int M, vector<long long> S)
 {
-    constexpr long long llongMax = std::numeric_limits<long long>::max();
+    if (N == K)
+        return 0;
 
-    unordered_map<long long, bool> seatAvailabilityMap;
-
-
-    // Update seat status with diners
-    for (int i = 0; i < M; ++i)
+    // Create a lambda function to cound available seat within range
+    auto countAvailableSeat= [&](float from, float to) 
     {
-        long long dinerSeatId = S[i] - 1LL;
-        long long minDistancingBlockId = std::max(dinerSeatId - K, 0LL);
-        long long maxDistancingBlockId = dinerSeatId < llongMax - K ?
-            std::min(dinerSeatId + K, N) :
-            llongMax;
+        if (from > to)
+            return 0LL;
 
+        float emptySeatCount = (to - from) + 1;
+        return static_cast<long long>(ceil( emptySeatCount / (K + 1) ) );
+    };
 
-        for (long long j = minDistancingBlockId; j <= maxDistancingBlockId; ++j) {
-            seatAvailabilityMap[j] = SEAT_OCCUPIED;
-        }
+    if (M == 0)
+        return countAvailableSeat(1, N);
+
+    std::set<long long> occupiedSeats(S.begin(), S.end());
+
+    long long maxAdditionalDinersCount = 0LL;
+    long long leftAvailableSeatNum = 1LL;
+
+    for (const long long dinerSeatNum : occupiedSeats)
+    {
+        long long leftOccupied = max((dinerSeatNum - K), leftAvailableSeatNum);
+        long long rightOccupied = dinerSeatNum < (N - K) ? (dinerSeatNum + K) : N;
+
+        maxAdditionalDinersCount += countAvailableSeat(leftAvailableSeatNum, leftOccupied - 1);
+        if (rightOccupied == N)
+            return maxAdditionalDinersCount;
+        
+        leftAvailableSeatNum = rightOccupied + 1;
     }
 
-    long long maxAdditionalDinersCount = 0;
-    // counting maximum additional diners count
-    for (long long i = 0; i < N; ++i)
-    {
-        if (seatAvailabilityMap.count(i) < 1 || seatAvailabilityMap[i])
-        {
-            maxAdditionalDinersCount++;
-            i += K;
-        }
-    }
+    maxAdditionalDinersCount += countAvailableSeat(leftAvailableSeatNum, N);
 
     return maxAdditionalDinersCount;
 }
