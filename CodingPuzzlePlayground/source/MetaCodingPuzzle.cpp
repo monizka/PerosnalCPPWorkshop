@@ -53,16 +53,17 @@ double getHitProbability(int R, int C, vector<vector<int>> G)
 #pragma region Level 1
 long long getMaxAdditionalDinersCount(long long N, long long K, int M, vector<long long> S)
 {
+    // Prevent overflow for K
     if (N == K)
         return 0;
 
-    // Create a lambda function to cound available seat within range
-    auto countAvailableSeat= [&](float from, float to) 
+    // Create a lambda function to count available seat within range
+    auto countAvailableSeat= [&](double from, double to) 
     {
         if (from > to)
             return 0LL;
 
-        float emptySeatCount = (to - from) + 1;
+        double emptySeatCount = (to - from) + 1;
         return static_cast<long long>(ceil( emptySeatCount / (K + 1) ) );
     };
 
@@ -90,4 +91,36 @@ long long getMaxAdditionalDinersCount(long long N, long long K, int M, vector<lo
 
     return maxAdditionalDinersCount;
 }
+
+
+
+long long getMaxAdditionalDinersCount2(long long N, long long K, int M, vector<long long> S)
+{
+    sort(S.begin(), S.end());
+
+    long long count = 
+        // Number of people who can sit before the first 
+        max(static_cast<long long>(ceil((S[0] - K - 1) / static_cast<double>(K + 1))), 0LL) + 
+        // and after the last person already sitting
+        max(static_cast<long long>(ceil((N - (S[M - 1] + K + 1) + 1) / static_cast<double>(K + 1))), 0LL);
+
+    int i = 0;
+    // Calculate for all the allowed spaces between people
+    while (i < M - 1) {
+        long long start = S[i] + K + 1;
+        long long end = S[++i] - K - 1;
+        count += static_cast<long long>(ceil((end - start + 1) / static_cast<double>(K + 1)));
+    }
+
+    return count;
+}
+
 #pragma endregion
+
+#pragma region Level 4
+double getMinExpectedHorizontalTravelDistance(int N, vector<int> H, vector<int> A, vector<int> B) 
+{
+    // Write your code here
+    return 0.0;
+}
+#pragma endreigon
